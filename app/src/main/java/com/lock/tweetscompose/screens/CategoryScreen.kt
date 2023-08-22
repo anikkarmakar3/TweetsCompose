@@ -1,6 +1,7 @@
 package com.lock.tweetscompose.screens
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,14 +21,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.lock.tweetscompose.R
 import com.lock.tweetscompose.viewmodels.CategoryViewModel
 
 
 @Composable
-fun CategoryScreen() {
-    val categoryViewModel: CategoryViewModel = viewModel()
+fun CategoryScreen(onClick : (category : String) -> Unit) {
+    val categoryViewModel: CategoryViewModel = hiltViewModel()
     val categories = categoryViewModel.categories.collectAsState()
 
     LazyVerticalGrid(
@@ -36,7 +37,7 @@ fun CategoryScreen() {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         items(categories.value.distinct()) {
-            categoryListItem(category = it)
+            categoryListItem(category = it, onClick = onClick)
         }
     }
 
@@ -45,11 +46,14 @@ fun CategoryScreen() {
 
 
 @Composable
-fun categoryListItem(category: String) {
+fun categoryListItem(category: String, onClick : (category : String) -> Unit) {
     Box(
         modifier = Modifier
             .padding(6.dp)
             .size(120.dp)
+            .clickable {
+                onClick(category)
+            }
             .clip(RoundedCornerShape(8.dp))
             .paint(
                 painter = painterResource(id = R.drawable.ic_circle_scatter_haikei),

@@ -1,5 +1,6 @@
 package com.lock.tweetscompose.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lock.tweetscompose.models.TweetsListItem
@@ -10,14 +11,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailsViewModel @Inject constructor(private val tweetsRepository: TweetsRepository):ViewModel() {
+class DetailsViewModel @Inject constructor(
+    private val tweetsRepository: TweetsRepository,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
-    val tweetsListItem : StateFlow<List<TweetsListItem>>
-    get() = tweetsRepository.tweets
+    val tweetsListItem: StateFlow<List<TweetsListItem>>
+        get() = tweetsRepository.tweets
 
     init {
         viewModelScope.launch {
-            tweetsRepository.getTweets("motivation")
+            val category = savedStateHandle.get<String>("category") ?: "Football"
+            tweetsRepository.getTweets(category)
         }
     }
 }
